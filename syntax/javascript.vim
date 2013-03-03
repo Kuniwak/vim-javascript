@@ -49,8 +49,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
   syntax keyword javaScriptDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
 
-  " doclet is multiline JSDoc comment.
-  syntax region javaScriptDoclet matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,@javaScriptHtml,@Spell skipwhite skipnl fold
+  syntax region javaScriptDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell fold
 
   " Highlight only @ symbol when it has unknown tag name.
   " It is better because it can tell that the tag name is unknown just by looking.
@@ -193,7 +192,7 @@ endif "DOM/HTML/CSS
 
 "" Code blocks
 " there is a name collision with javaScriptExpression in html.vim, hence the use of the '2' here
-syntax cluster javaScriptExpression2 contains=javaScriptComment,javaScriptLineComment,javaScriptDoclet,javaScriptOneLinerDoclet,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptSource,javaScriptCommonJS,javaScriptThis,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError
+syntax cluster javaScriptExpression2 contains=javaScriptComment,javaScriptLineComment,javaScriptDocComment,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptSource,javaScriptCommonJS,javaScriptThis,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError
 syntax cluster javaScriptAll       contains=@javaScriptExpression2,javaScriptLabel,javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptStatement,javaScriptTernaryIf
 syntax region  javaScriptBracket   matchgroup=javaScriptBracket transparent start="\[" end="\]" contains=@javaScriptAll,javaScriptParensErrB,javaScriptParensErrC,javaScriptBracket,javaScriptParen,javaScriptBlock,@htmlPreproc
 syntax region  javaScriptParen     matchgroup=javaScriptParen   transparent start="("  end=")"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrC,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc
@@ -235,12 +234,10 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptComment                  Comment
   HiLink javaScriptLineComment              Comment
   HiLink javaScriptEnvComment               PreProc
-  HiLink javaScriptDocComment               Comment
   HiLink javaScriptCommentTodo              Todo
   HiLink javaScriptCvsTag                   Function
 
-  HiLink javaScriptDoclet                   Comment
-  HiLink javaScriptOneLinerDoclet           Comment
+  HiLink javaScriptDocComment               Comment
   HiLink javaScriptDocTag                   Special
   HiLink javaScriptDocInlineTag             Comment
   HiLink javaScriptDocTypeParamDescTagNames Special
