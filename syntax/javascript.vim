@@ -74,7 +74,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocTypeDescTagNames        contained define enum return nextgroup=javaScriptDocTypeDesc skipwhite skipnl
   syntax keyword javaScriptDocTypeTagNames            contained extends implements this type typedef nextgroup=javaScriptDocType skipwhite skipnl
   syntax keyword javaScriptDocDescTagNames            contained see deprecated fileoverview license preserve nextgroup=javaScriptDocDesc skipwhite skipnl
-  syntax keyword javaScriptDocMarkerTagNames          contained const constructor interface inheritDoc expose dict private protected struct nosideeffects override preserveTry nextgroup=javaScriptDocInvaliedDesc skipwhite
+  syntax keyword javaScriptDocMarkerTagNames          contained const constructor interface inheritDoc expose dict private protected struct nosideeffects override preserveTry skipwhite
   syntax keyword javaScriptDocAuthorTagNames          contained author nextgroup=javaScriptDocAuthorContent skipwhite skipnl
   syntax keyword javaScriptDocSuppressTagNames        contained suppress nextgroup=javaScriptDocSuppressFlag skipwhite skipnl
   syntax keyword javaScriptDocInlineTagNames          contained code link nextgroup=javaScriptDocInlineTagContent skipwhite skipnl
@@ -97,7 +97,6 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax region  javaScriptDocTypeParamDescTagType    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocTypeParamDescTagParam skipwhite skipnl
   syntax match   javaScriptDocTypeParamDescTagParam   contained "\%(\w\|_\|\$\)\%(\w\|\d\|_\|\$\)*" nextgroup=javaScriptDocDesc skipwhite skipnl
   syntax match   javaScriptDocDesc                    contained ".*\(\s\|\n\)" contains=javaScriptDocInlineTag
-  syntax match   javaScriptDocInvaliedDesc            contained ".*"
 
   " suppress tag flags
   " See: https://code.google.com/p/closure-compiler/wiki/Warnings#Warnings_Categories
@@ -265,7 +264,6 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptDocInlineTagContent      Normal
   HiLink javaScriptDocType                  Error
   HiLink javaScriptDocSuppressFlag          Error
-  HiLink javaScriptDocInvaliedDesc          Error
 
   HiLink javaScriptStringS                  String
   HiLink javaScriptStringD                  String
