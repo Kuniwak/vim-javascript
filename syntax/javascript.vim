@@ -43,25 +43,66 @@ if !exists("javascript_ignore_javaScriptdoc")
   "syntax include @javaHtml <sfile>:p:h/html.vim
   "unlet b:current_syntax
 
-  syntax region javaScriptDocComment      matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTags,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell fold
+  " Highlight predefined objects. It is better because it makes misspells visible.
+  syntax keyword javaScriptDocPredefinedObjects contained string number boolean
+  syntax keyword javaScriptDocPredefinedObjects contained Error EvalError RangeError ReferenceError SyntaxError TypeError URIError
+  syntax keyword javaScriptDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
+  syntax keyword javaScriptDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
 
-  " tags containing a param
-  syntax match  javaScriptDocTags         contained "@\(augments\|base\|borrows\|class\|constructs\|default\|exception\|exports\|extends\|file\|member\|memberOf\|methodOf\|module\|name\|namespace\|optional\|requires\|title\|throws\|version\)\>" nextgroup=javaScriptDocParam skipwhite
-  " tags containing type and param
-  syntax match  javaScriptDocTags         contained "@\(argument\|param\|property\)\>" nextgroup=javaScriptDocType skipwhite
-  " tags containing type but no param
-  syntax match  javaScriptDocTags         contained "@\(type\|return\|returns\|api\)\>" nextgroup=javaScriptDocTypeNoParam skipwhite
-  " tags containing references
-  syntax match  javaScriptDocTags         contained "@\(lends\|link\|see\)\>" nextgroup=javaScriptDocSeeTag skipwhite
-  " other tags (no extra syntax)
-  syntax match  javaScriptDocTags         contained "@\(access\|addon\|alias\|author\|beta\|constant\|const\|constructor\|copyright\|deprecated\|description\|event\|example\|exec\|field\|fileOverview\|fileoverview\|function\|global\|ignore\|inner\|license\|overview\|private\|protected\|project\|public\|readonly\|since\|static\)\>"
+  " doclet is multiline JSDoc comment.
+  syntax region javaScriptDoclet matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,@javaScriptHtml,@Spell skipwhite skipnl fold
 
-  syntax region javaScriptDocType         start="{" end="}" oneline contained nextgroup=javaScriptDocParam skipwhite
-  syntax match  javaScriptDocType         contained "\%(#\|\"\|\w\|\.\|:\|\/\)\+" nextgroup=javaScriptDocParam skipwhite
-  syntax region javaScriptDocTypeNoParam  start="{" end="}" oneline contained
-  syntax match  javaScriptDocTypeNoParam  contained "\%(#\|\"\|\w\|\.\|:\|\/\)\+"
-  syntax match  javaScriptDocParam        contained "\%(#\|\"\|{\|}\|\w\|\.\|:\|\/\)\+"
-  syntax region javaScriptDocSeeTag       contained matchgroup=javaScriptDocSeeTag start="{" end="}" contains=javaScriptDocTags
+  " Highlight only @ symbol when it has unknown tag name.
+  " It is better because it can tell that the tag name is unknown just by looking.
+  syntax match  javaScriptDocTag       contained "@" nextgroup=javaScriptDocTypeParamDescTagNames,javaScriptDocTypeDescTagNames,javaScriptDocTypeTagNames,javaScriptDocDescTagNames,javaScriptDocMarkerTagNames,javaScriptDocSuppressTagNames,javaScriptDocAuthorTagNames
+  syntax region javaScriptDocInlineTag contained matchgroup=javaScriptDocInlineCurlyBrackets start="{@" end="}" contains=javaScriptDocInlineTagNames
+
+  "" Closure Compiler tag (not completely compatible with JSDoc tag) name definitions
+  " type param desc tag example:  @param {type} param desc.
+  " type desc tag example:        @return {type} desc.
+  " type tag example:             @type {type}
+  " desc tag example:             @deprecated desc
+  " marker tag example:           @constructor
+  " author tag example:           @author foo@bar.com (FooBar)
+  " suppress tag example:         @suppress {visibility}
+  " inline tag example:           {@link http://example.com}
+  "
+  " The syntax makes a distinction between normal tags and inline tags and suppress tags.
+  " Because, usually inline tags are used for the purpose of a description decoration, so inline tags might be not important than others.
+  " And suppress tags are used for purpose of Closure Compiler control, so a misspell in a suppress flag sould be highlighted.
+  syntax keyword javaScriptDocTypeParamDescTagNames   contained param nextgroup=javaScriptDocTypeParamDescTagType skipwhite skipnl
+  syntax keyword javaScriptDocTypeDescTagNames        contained define enum return nextgroup=javaScriptDocTypeDesc skipwhite skipnl
+  syntax keyword javaScriptDocTypeTagNames            contained extends implements this type typedef nextgroup=javaScriptDocType skipwhite skipnl
+  syntax keyword javaScriptDocDescTagNames            contained see deprecated fileoverview license preserve nextgroup=javaScriptDocDesc skipwhite skipnl
+  syntax keyword javaScriptDocMarkerTagNames          contained const constructor interface inheritDoc expose dict private protected struct nosideeffects override preserveTry nextgroup=javaScriptDocInvaliedDesc skipwhite
+  syntax keyword javaScriptDocAuthorTagNames          contained author nextgroup=javaScriptDocAuthorContent skipwhite skipnl
+  syntax keyword javaScriptDocSuppressTagNames        contained suppress nextgroup=javaScriptDocSuppressFlag skipwhite skipnl
+  syntax keyword javaScriptDocInlineTagNames          contained code link nextgroup=javaScriptDocInlineTagContent skipwhite skipnl
+
+  " detect valied JavaScript object name path such as: foo.Bar or foo.Bar#someMethod
+  syntax match   javaScriptDocNameContent             contained "\%(\w\|_\|\$\)\(\%(\w\|\d\|_\|\$\|\.\|#\)*\%(\w\|\d\|_\|\$\)\)\?" contains=javaScriptDocPredefinedObjects
+  " detect type expression operators
+  " See: https://developers.google.com/closure/compiler/docs/js-for-compiler#types
+  syntax match   javaScriptDocTypeOperator            contained "\%(|\|=\|!\|?\|\*\|\.\.\.\|,\|(\|)\|:\)"
+  " ActionScript3 like generics
+  syntax region  javaScriptDocGenerics                contained matchgroup=javaScriptDocTypeOperator start="\.<" end=">" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics
+  " TODO: implement function expression
+
+  " detect correct author tag statement
+  syntax match   javaScriptDocAuthorContent           contained "[^@]\+@\S\+\s([^)]\+)"
+  syntax match   javaScriptDocInlineTagContent        contained "[^}]\+"
+  syntax region  javaScriptDocSymbolName              contained start="{" end="}" contains=javaScriptDocNameContent
+  syntax region  javaScriptDocType                    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics
+  syntax region  javaScriptDocTypeDesc                contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocDesc
+  syntax region  javaScriptDocTypeParamDescTagType    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocTypeParamDescTagParam skipwhite skipnl
+  syntax match   javaScriptDocTypeParamDescTagParam   contained "\%(\w\|_\|\$\)\%(\w\|\d\|_\|\$\)*" nextgroup=javaScriptDocDesc skipwhite skipnl
+  syntax match   javaScriptDocDesc                    contained ".*\(\s\|\n\)" contains=javaScriptDocInlineTag
+  syntax match   javaScriptDocInvaliedDesc            contained ".*"
+
+  " suppress tag flags
+  " See: https://code.google.com/p/closure-compiler/wiki/Warnings#Warnings_Categories
+  syntax region  javaScriptDocSuppressFlag            contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocSuppressFlagContent
+  syntax keyword javaScriptDocSuppressFlagContent     contained accessControls ambiguousFunctionDecl checkDebuggerStatement checkRegExp checkTypes checkVars const constantProperty deprecated duplicate es5Strict externsValidation fileoverviewTags globalThis internetExplorerChecks invalidCasts missingProperties nonStandardJsDocs strictModuleDepCheck suspiciousCode undefinedNames undefinedVars unknownDefines uselessCode visibility
 
   syntax case match
 endif   "" JSDoc end
@@ -153,7 +194,7 @@ endif "DOM/HTML/CSS
 
 "" Code blocks
 " there is a name collision with javaScriptExpression in html.vim, hence the use of the '2' here
-syntax cluster javaScriptExpression2 contains=javaScriptComment,javaScriptLineComment,javaScriptDocComment,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptSource,javaScriptCommonJS,javaScriptThis,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError
+syntax cluster javaScriptExpression2 contains=javaScriptComment,javaScriptLineComment,javaScriptDoclet,javaScriptOneLinerDoclet,javaScriptStringD,javaScriptStringS,javaScriptRegexpString,javaScriptNumber,javaScriptFloat,javaScriptSource,javaScriptCommonJS,javaScriptThis,javaScriptType,javaScriptOperator,javaScriptBoolean,javaScriptNull,javaScriptFunction,javaScriptGlobalObjects,javaScriptExceptions,javaScriptFutureKeys,javaScriptDomErrNo,javaScriptDomNodeConsts,javaScriptHtmlEvents,javaScriptDotNotation,javaScriptBracket,javaScriptParen,javaScriptBlock,javaScriptParenError
 syntax cluster javaScriptAll       contains=@javaScriptExpression2,javaScriptLabel,javaScriptConditional,javaScriptRepeat,javaScriptBranch,javaScriptStatement,javaScriptTernaryIf
 syntax region  javaScriptBracket   matchgroup=javaScriptBracket transparent start="\[" end="\]" contains=@javaScriptAll,javaScriptParensErrB,javaScriptParensErrC,javaScriptBracket,javaScriptParen,javaScriptBlock,@htmlPreproc
 syntax region  javaScriptParen     matchgroup=javaScriptParen   transparent start="("  end=")"  contains=@javaScriptAll,javaScriptParensErrA,javaScriptParensErrC,javaScriptParen,javaScriptBracket,javaScriptBlock,@htmlPreproc
@@ -192,58 +233,81 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   else
     command -nargs=+ HiLink hi def link <args>
   endif
-  HiLink javaScriptComment              Comment
-  HiLink javaScriptLineComment          Comment
-  HiLink javaScriptEnvComment           PreProc
-  HiLink javaScriptDocComment           Comment
-  HiLink javaScriptCommentTodo          Todo
-  HiLink javaScriptCvsTag               Function
-  HiLink javaScriptDocTags              Special
-  HiLink javaScriptDocSeeTag            Function
-  HiLink javaScriptDocType              Type
-  HiLink javaScriptDocTypeNoParam       Type
-  HiLink javaScriptDocParam             Label
-  HiLink javaScriptStringS              String
-  HiLink javaScriptStringD              String
-  HiLink javaScriptTernaryIfOperator    Conditional
-  HiLink javaScriptRegexpString         String
-  HiLink javaScriptRegexpCharClass      Character
-  HiLink javaScriptCharacter            Character
-  HiLink javaScriptPrototype            Type
-  HiLink javaScriptConditional          Conditional
-  HiLink javaScriptBranch               Conditional
-  HiLink javaScriptRepeat               Repeat
-  HiLink javaScriptStatement            Statement
-  HiLink javaScriptFunction             Function
-  HiLink javaScriptError                Error
-  HiLink javaScriptParensError          Error
-  HiLink javaScriptParensErrA           Error
-  HiLink javaScriptParensErrB           Error
-  HiLink javaScriptParensErrC           Error
-  HiLink javaScriptOperator             Operator
-  HiLink javaScriptType                 Type
-  HiLink javaScriptThis                 Type
-  HiLink javaScriptNull                 Type
-  HiLink javaScriptNumber               Number
-  HiLink javaScriptFloat                Number
-  HiLink javaScriptBoolean              Boolean
-  HiLink javaScriptLabel                Label
-  HiLink javaScriptSpecial              Special
-  HiLink javaScriptSource               Special
-  HiLink javaScriptCommonJS             Include
-  HiLink javaScriptGlobalObjects        Special
-  HiLink javaScriptExceptions           Special
+  HiLink javaScriptComment                  Comment
+  HiLink javaScriptLineComment              Comment
+  HiLink javaScriptEnvComment               PreProc
+  HiLink javaScriptDocComment               Comment
+  HiLink javaScriptCommentTodo              Todo
+  HiLink javaScriptCvsTag                   Function
 
-  HiLink javaScriptDomErrNo             Constant
-  HiLink javaScriptDomNodeConsts        Constant
-  HiLink javaScriptDomElemAttrs         Label
-  HiLink javaScriptDomElemFuncs         PreProc
+  HiLink javaScriptDoclet                   Comment
+  HiLink javaScriptOneLinerDoclet           Comment
+  HiLink javaScriptDocTag                   Special
+  HiLink javaScriptDocInlineTag             Comment
+  HiLink javaScriptDocTypeParamDescTagNames Special
+  HiLink javaScriptDocTypeDescTagNames      Special
+  HiLink javaScriptDocTypeTagNames          Special
+  HiLink javaScriptDocDescTagNames          Special
+  HiLink javaScriptDocMarkerTagNames        Special
+  HiLink javaScriptDocInlineTagNames        Statement
+  HiLink javaScriptDocAuthorTagNames        Special
+  HiLink javaScriptDocSuppressTagNames      Special
+  HiLink javaScriptDocSuppressFlagContent   Type
+  HiLink javaScriptDocPredefinedObjects     Function
+  HiLink javaScriptDocNameContent           Special
+  HiLink javaScriptDocCurlyBrackets         Special
+  HiLink javaScriptDocInlineCurlyBrackets   Statement
+  HiLink javaScriptDocGenerics              Special
+  HiLink javaScriptDocTypeOperator          Special
+  HiLink javaScriptDocTypeParamDescTagParam Normal
+  HiLink javaScriptDocAuthorContent         Normal
+  HiLink javaScriptDocDesc                  Comment
+  HiLink javaScriptDocInlineTagContent      Normal
+  HiLink javaScriptDocType                  Error
+  HiLink javaScriptDocSuppressFlag          Error
+  HiLink javaScriptDocInvaliedDesc          Error
 
-  HiLink javaScriptHtmlEvents           Special
-  HiLink javaScriptHtmlElemAttrs        Label
-  HiLink javaScriptHtmlElemFuncs        PreProc
-
-  HiLink javaScriptCssStyles            Label
+  HiLink javaScriptStringS                  String
+  HiLink javaScriptStringD                  String
+  HiLink javaScriptTernaryIfOperator        Conditional
+  HiLink javaScriptRegexpString             String
+  HiLink javaScriptRegexpCharClass          Character
+  HiLink javaScriptCharacter                Character
+  HiLink javaScriptPrototype                Type
+  HiLink javaScriptConditional              Conditional
+  HiLink javaScriptBranch                   Conditional
+  HiLink javaScriptRepeat                   Repeat
+  HiLink javaScriptStatement                Statement
+  HiLink javaScriptFunction                 Function
+  HiLink javaScriptError                    Error
+  HiLink javaScriptParensError              Error
+  HiLink javaScriptParensErrA               Error
+  HiLink javaScriptParensErrB               Error
+  HiLink javaScriptParensErrC               Error
+  HiLink javaScriptOperator                 Operator
+  HiLink javaScriptType                     Type
+  HiLink javaScriptThis                     Type
+  HiLink javaScriptNull                     Type
+  HiLink javaScriptNumber                   Number
+  HiLink javaScriptFloat                    Number
+  HiLink javaScriptBoolean                  Boolean
+  HiLink javaScriptLabel                    Label
+  HiLink javaScriptSpecial                  Special
+  HiLink javaScriptSource                   Special
+  HiLink javaScriptCommonJS                 Include
+  HiLink javaScriptGlobalObjects            Special
+  HiLink javaScriptExceptions               Special
+                                            
+  HiLink javaScriptDomErrNo                 Constant
+  HiLink javaScriptDomNodeConsts            Constant
+  HiLink javaScriptDomElemAttrs             Label
+  HiLink javaScriptDomElemFuncs             PreProc
+                                            
+  HiLink javaScriptHtmlEvents               Special
+  HiLink javaScriptHtmlElemAttrs            Label
+  HiLink javaScriptHtmlElemFuncs            PreProc
+                                            
+  HiLink javaScriptCssStyles                Label
 
   delcommand HiLink
 endif
