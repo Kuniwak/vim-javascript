@@ -96,7 +96,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax region  javaScriptDocType                    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics
   syntax region  javaScriptDocTypeDesc                contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocDesc
   syntax region  javaScriptDocTypeParamDescTagType    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocTypeParamDescTagParam skipwhite skipnl
-  syntax match   javaScriptDocTypeParamDescTagParam   contained "\%(\w\|_\|\$\)\%(\w\|\d\|_\|\$\)*" nextgroup=javaScriptDocDesc skipwhite skipnl
+  syntax match   javaScriptDocTypeParamDescTagParam   contained "\*\?\s*\%(\w\|_\|\$\)\%(\w\|\d\|_\|\$\)*" nextgroup=javaScriptDocDesc skipwhite skipnl
   syntax match   javaScriptDocDesc                    contained ".*\(\s\|\n\)" contains=javaScriptDocInlineTag
 
   " suppress tag flags
