@@ -49,7 +49,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
   syntax keyword javaScriptDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
 
-  syntax region javaScriptDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell fold keepend
+  syntax region javaScriptDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell,javaScriptDocHTMLTag fold keepend
 
   " Highlight only @ symbol when it has unknown tag name.
   " It is better because it can tell that the tag name is unknown just by looking.
@@ -77,6 +77,8 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocAuthorTagNames          contained author nextgroup=javaScriptDocAuthorContent skipwhite skipnl
   syntax keyword javaScriptDocSuppressTagNames        contained suppress nextgroup=javaScriptDocSuppressFlag skipwhite skipnl
   syntax keyword javaScriptDocInlineTagNames          contained code link nextgroup=javaScriptDocInlineTagContent skipwhite skipnl
+
+  syntax match   javaScriptDocHTMLTag                 contained "<[^>]\+>"
 
   " detect valied JavaScript object name path such as: foo.Bar or foo.Bar#someMethod
   syntax match   javaScriptDocNameContent             contained "\%(\w\|_\|\$\)\(\%(\w\|\d\|_\|\$\|\.\|#\)*\%(\w\|\d\|_\|\$\)\)\?" contains=javaScriptDocPredefinedObjects
@@ -238,6 +240,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptCvsTag                   Function
 
   HiLink javaScriptDocComment               Comment
+  HiLink javaScriptDocHTMLTag               Statement
   HiLink javaScriptDocTag                   Special
   HiLink javaScriptDocInlineTag             Comment
   HiLink javaScriptDocTypeParamDescTagNames Special
