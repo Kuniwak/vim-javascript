@@ -49,7 +49,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
   syntax keyword javaScriptDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
 
-  syntax region javaScriptDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell,javaScriptDocHTMLTag fold keepend
+  syntax region javaScriptDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=javaScriptDocTag,javaScriptDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell,javaScriptDocHTMLTag,javaScriptDocMarkdownCode fold keepend
 
   " Highlight only @ symbol when it has unknown tag name.
   " It is better because it can tell that the tag name is unknown just by looking.
@@ -70,7 +70,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   " Because, usually inline tags are used for the purpose of a description decoration, so inline tags might be not important than others.
   " And suppress tags are used for purpose of Closure Compiler control, so a misspell in a suppress flag sould be highlighted.
   syntax keyword javaScriptDocTypeParamDescTagNames   contained param nextgroup=javaScriptDocTypeParamDescTagType skipwhite skipnl
-  syntax keyword javaScriptDocTypeDescTagNames        contained define enum return nextgroup=javaScriptDocTypeDesc skipwhite skipnl
+  syntax keyword javaScriptDocTypeDescTagNames        contained define enum return throws nextgroup=javaScriptDocTypeDesc skipwhite skipnl
   syntax keyword javaScriptDocTypeTagNames            contained extends implements this type typedef nextgroup=javaScriptDocType skipwhite skipnl
   syntax keyword javaScriptDocDescTagNames            contained see deprecated fileoverview license preserve nextgroup=javaScriptDocDesc skipwhite skipnl
   syntax keyword javaScriptDocMarkerTagNames          contained const constructor interface inheritDoc expose dict private protected struct nosideeffects override preserveTry skipwhite
@@ -87,17 +87,22 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax match   javaScriptDocTypeOperator            contained "\%(|\|=\|!\|?\|\*\|\.\.\.\|,\|(\|)\|:\)"
   " ActionScript3 like generics
   syntax region  javaScriptDocGenerics                contained matchgroup=javaScriptDocTypeOperator start="\.<" end=">" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics
+  syntax region  javaScriptDocRecordType              contained matchgroup=javaScriptDocTypeOperator start="{" end="}" contains=javaScriptDocRecordKey
+  syntax match   javaScriptDocRecordKey               contained "[^:]*" nextgroup=javaScriptDocRecordPanctuator skipwhite skipnl
+  syntax match   javaScriptDocRecordPanctuator        contained ":" nextgroup=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics,javaScriptDocRecordType skipwhite skipnl
+
   " TODO: implement function expression
 
   " detect correct author tag statement
   syntax match   javaScriptDocAuthorContent           contained "[^@]\+@\S\+\s([^)]\+)"
   syntax match   javaScriptDocInlineTagContent        contained "[^}]\+"
+  syntax region  javaScriptDocMarkdownCode            contained matchgroup=javaScriptDocBackQuotes start="`" end="`" contains=javaScriptDocMarkdownCodeContent
   syntax region  javaScriptDocSymbolName              contained start="{" end="}" contains=javaScriptDocNameContent
-  syntax region  javaScriptDocType                    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics
-  syntax region  javaScriptDocTypeDesc                contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocDesc
-  syntax region  javaScriptDocTypeParamDescTagType    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics nextgroup=javaScriptDocTypeParamDescTagParam skipwhite skipnl
+  syntax region  javaScriptDocType                    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics,javaScriptDocRecordType
+  syntax region  javaScriptDocTypeDesc                contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics,javaScriptDocRecordType nextgroup=javaScriptDocDesc
+  syntax region  javaScriptDocTypeParamDescTagType    contained matchgroup=javaScriptDocCurlyBrackets start="{" end="}" contains=javaScriptDocNameContent,javaScriptDocTypeOperator,javaScriptDocGenerics,javaScriptDocRecordType nextgroup=javaScriptDocTypeParamDescTagParam skipwhite skipnl
   syntax match   javaScriptDocTypeParamDescTagParam   contained "\*\?\s*\%(\w\|_\|\$\)\%(\w\|\d\|_\|\$\)*" nextgroup=javaScriptDocDesc skipwhite skipnl
-  syntax match   javaScriptDocDesc                    contained ".*\(\s\|\n\)" contains=javaScriptDocInlineTag
+  syntax match   javaScriptDocDesc                    contained ".*\(\s\|\n\)" contains=javaScriptDocInlineTag,javaScriptDocMarkdownCode
 
   " suppress tag flags
   " See: https://code.google.com/p/closure-compiler/wiki/Warnings#Warnings_Categories
@@ -254,7 +259,10 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptDocSuppressFlagContent   Type
   HiLink javaScriptDocPredefinedObjects     Function
   HiLink javaScriptDocNameContent           Special
+  HiLink javaScriptDocRecordKey             Special
+  HiLink javaScriptDocRecordPanctuator      Special
   HiLink javaScriptDocCurlyBrackets         Special
+  HiLink javaScriptDocBackQuotes            Special
   HiLink javaScriptDocInlineCurlyBrackets   Statement
   HiLink javaScriptDocGenerics              Special
   HiLink javaScriptDocTypeOperator          Special
@@ -262,6 +270,8 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptDocAuthorContent         Normal
   HiLink javaScriptDocDesc                  Comment
   HiLink javaScriptDocInlineTagContent      Normal
+  HiLink javaScriptDocMarkdownCode          Comment
+  HiLink javaScriptDocMarkdownCodeContent   Normal
   HiLink javaScriptDocType                  Error
   HiLink javaScriptDocSuppressFlag          Error
 
