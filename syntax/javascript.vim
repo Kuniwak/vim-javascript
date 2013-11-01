@@ -53,7 +53,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   "unlet b:current_syntax
 
   " Highlight predefined objects. It is better because it makes misspells visible.
-  syntax keyword jsDocPredefinedObjects contained string number boolean
+  syntax keyword jsDocPredefinedObjects contained string number boolean null undefined
   syntax keyword jsDocPredefinedObjects contained Error EvalError RangeError ReferenceError SyntaxError TypeError URIError
   syntax keyword jsDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
   syntax keyword jsDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
@@ -266,34 +266,34 @@ if version >= 508 || !exists("did_javascript_syn_inits")
     command -nargs=+ HiLink hi def link <args>
   endif
   HiLink jsDocComment               Comment
-  HiLink jsDocHTMLTag               Statement
-  HiLink jsDocTag                   Special
+  HiLink jsDocHTMLTag               Identifier
+  HiLink jsDocTag                   Statement
   HiLink jsDocInlineTag             Comment
-  HiLink jsDocTypeParamDescTagNames Special
-  HiLink jsDocTypeDescTagNames      Special
-  HiLink jsDocTypeTagNames          Special
-  HiLink jsDocDescTagNames          Special
-  HiLink jsDocMarkerTagNames        Special
-  HiLink jsDocInlineTagNames        Statement
-  HiLink jsDocAuthorTagNames        Special
-  HiLink jsDocSuppressTagNames      Special
+  HiLink jsDocTypeParamDescTagNames Statement
+  HiLink jsDocTypeDescTagNames      Statement
+  HiLink jsDocTypeTagNames          Statement
+  HiLink jsDocDescTagNames          Statement
+  HiLink jsDocMarkerTagNames        Statement
+  HiLink jsDocInlineTagNames        Identifier
+  HiLink jsDocAuthorTagNames        Statement
+  HiLink jsDocSuppressTagNames      Statement
   HiLink jsDocSuppressFlagContent   Type
-  HiLink jsDocPredefinedObjects     Function
-  HiLink jsDocNameContent           Special
-  HiLink jsDocRecordType            Special
-  HiLink jsDocRecordKey             Special
-  HiLink jsDocRecordPanctuator      Special
-  HiLink jsDocCurlyBrackets         Special
+  HiLink jsDocPredefinedObjects     Statement
+  HiLink jsDocNameContent           Normal
+  HiLink jsDocRecordType            Statement
+  HiLink jsDocRecordKey             Statement
+  HiLink jsDocRecordPanctuator      Statement
+  HiLink jsDocCurlyBrackets         Statement
   HiLink jsDocBackQuotes            Comment
-  HiLink jsDocInlineCurlyBrackets   Statement
-  HiLink jsDocGenerics              Special
-  HiLink jsDocTypeOperator          Special
+  HiLink jsDocInlineCurlyBrackets   Identifier
+  HiLink jsDocGenerics              Statement
+  HiLink jsDocTypeOperator          Statement
   HiLink jsDocTypeParamDescTagParam Normal
   HiLink jsDocAuthorContent         Normal
   HiLink jsDocDesc                  Comment
   HiLink jsDocInlineTagContent      Normal
-  HiLink jsDocMarkdownCode          Statement
-  HiLink jsDocMarkdownCodeContent   Statement
+  HiLink jsDocMarkdownCode          Identifier
+  HiLink jsDocMarkdownCodeContent   Identifier
   HiLink jsDocType                  Error
   HiLink jsDocSuppressFlag          Error
   HiLink jsComment              Comment
@@ -313,7 +313,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink jsRegexpGroup          jsRegexpString
   HiLink jsRegexpCharClass      Character
   HiLink jsCharacter            Character
-  HiLink jsPrototype            Special
+  HiLink jsPrototype            Type
   HiLink jsConditional          Conditional
   HiLink jsBranch               Conditional
   HiLink jsLabel                Label
@@ -322,8 +322,8 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink jsStatement            Statement
   HiLink jsException            Exception
   HiLink jsKeyword              Keyword
-  HiLink jsFunction             Type
-  HiLink jsFuncName             Function
+  HiLink jsFunction             Function
+  HiLink jsFuncName             Normal
   HiLink jsArgsObj              Special
   HiLink jsError                Error
   HiLink jsParensError          Error
