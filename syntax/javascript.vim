@@ -31,7 +31,7 @@ syntax sync fromstart
 syntax keyword javaScriptCommentTodo    TODO FIXME XXX TBD contained
 syntax region  javaScriptLineComment    start=+\/\/+ end=+$+ keepend contains=javaScriptCommentTodo,@Spell
 syntax region  javaScriptEnvComment     start="\%^#!" end="$" display
-syntax region  javaScriptLineComment    start=+^\s*\/\/+ skip=+\n\s*\/\/+ end=+$+ keepend contains=javaScriptCommentTodo,@Spell fold
+syntax region  javaScriptLineComment    start=+^\s*\/\/+ skip=+\n\s*\/\/+ end=+$+ keepend contains=javaScriptCommentTodo,@Spell,javaScriptDocMarkdownCode fold
 syntax region  javaScriptCvsTag         start="\$\cid:" end="\$" oneline contained
 syntax region  javaScriptComment        start="/\*"  end="\*/" contains=javaScriptCommentTodo,javaScriptCvsTag,@Spell fold
 
@@ -72,7 +72,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword javaScriptDocTypeParamDescTagNames   contained param nextgroup=javaScriptDocTypeParamDescTagType skipwhite skipnl
   syntax keyword javaScriptDocTypeDescTagNames        contained define enum return throws nextgroup=javaScriptDocTypeDesc skipwhite skipnl
   syntax keyword javaScriptDocTypeTagNames            contained extends implements this type typedef nextgroup=javaScriptDocType skipwhite skipnl
-  syntax keyword javaScriptDocDescTagNames            contained see deprecated fileoverview license preserve nextgroup=javaScriptDocDesc skipwhite skipnl
+  syntax keyword javaScriptDocDescTagNames            contained see deprecated fileoverview license preserve template nextgroup=javaScriptDocDesc skipwhite skipnl
   syntax keyword javaScriptDocMarkerTagNames          contained const constructor interface inheritDoc expose dict private protected struct nosideeffects override preserveTry skipwhite
   syntax keyword javaScriptDocAuthorTagNames          contained author nextgroup=javaScriptDocAuthorContent skipwhite skipnl
   syntax keyword javaScriptDocSuppressTagNames        contained suppress nextgroup=javaScriptDocSuppressFlag skipwhite skipnl
@@ -259,10 +259,11 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptDocSuppressFlagContent   Type
   HiLink javaScriptDocPredefinedObjects     Function
   HiLink javaScriptDocNameContent           Special
+  HiLink javaScriptDocRecordType            Special
   HiLink javaScriptDocRecordKey             Special
   HiLink javaScriptDocRecordPanctuator      Special
   HiLink javaScriptDocCurlyBrackets         Special
-  HiLink javaScriptDocBackQuotes            Special
+  HiLink javaScriptDocBackQuotes            Comment
   HiLink javaScriptDocInlineCurlyBrackets   Statement
   HiLink javaScriptDocGenerics              Special
   HiLink javaScriptDocTypeOperator          Special
@@ -270,7 +271,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink javaScriptDocAuthorContent         Normal
   HiLink javaScriptDocDesc                  Comment
   HiLink javaScriptDocInlineTagContent      Normal
-  HiLink javaScriptDocMarkdownCode          Comment
+  HiLink javaScriptDocMarkdownCode          Noemal
   HiLink javaScriptDocMarkdownCodeContent   Normal
   HiLink javaScriptDocType                  Error
   HiLink javaScriptDocSuppressFlag          Error
