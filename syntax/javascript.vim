@@ -58,7 +58,7 @@ if !exists("javascript_ignore_javaScriptdoc")
   syntax keyword jsDocPredefinedObjects contained Array Boolean Date Function Infinity JavaArray JavaClass JavaObject JavaPackage Math Number NaN Object Packages RegExp String Undefined java netscape sun
   syntax keyword jsDocPredefinedObjects contained DOMImplementation DocumentFragment Document Node NodeList NamedNodeMap CharacterData Attr Element Text Comment CDATASection DocumentType Notation Entity EntityReference ProcessingInstruction
 
-  syntax region jsDocComment matchgroup=javaScriptComment start="/\*\*\s*"  end="\*/" contains=jsDocTag,jsDocInlineTag,javaScriptCommentTodo,javaScriptCvsTag,@javaScriptHtml,@Spell,jsDocHTMLTag,jsDocMarkdownCode fold keepend
+  syntax region jsDocComment matchgroup=jsComment start="/\*\*\s*"  end="\*/" contains=jsDocTag,jsDocInlineTag,jsCommentTodo,jsCvsTag,@Spell,jsDocHTMLTag,jsDocMarkdownCode fold keepend
 
   " Highlight only @ symbol when it has unknown tag name.
   " It is better because it can tell that the tag name is unknown just by looking.
