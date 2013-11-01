@@ -131,9 +131,6 @@ syntax region  jsStringS         start=+'+  skip=+\\\\\|\\$'+  end=+'+  contains
 syntax region  jsRegexpCharClass start=+\[+ end=+\]+ contained
 syntax match   jsRegexpBoundary   "\v%(\<@![\^$]|\\[bB])" contained
 syntax match   jsRegexpBackRef   "\v\\[1-9][0-9]*" contained
-syntax match   jsRegexpQuantifier "\v\\@<!%([?*+]|\{\d+%(,|,\d+)?})\??" contained
-syntax match   jsRegexpOr        "\v\<@!\|" contained
-syntax match   jsRegexpMod       "\v\(@<=\?[:=!>]" contained
 syntax cluster jsRegexpSpecial   contains=jsRegexpBoundary,jsRegexpBackRef,jsRegexpQuantifier,jsRegexpOr,jsRegexpMod
 syntax region  jsRegexpGroup     start="\\\@<!(" end="\\\@<!)" contained contains=jsRegexpCharClass,@jsRegexpSpecial keepend
 syntax region  jsRegexpString    start=+\(\(\(return\|case\)\s\+\)\@<=\|\(\([)\]"']\|\d\|\w\)\s*\)\@<!\)/\(\*\|/\)\@!+ skip=+\\\\\|\\/+ end=+/[gimy]\{,4}+ contains=jsSpecial,jsRegexpCharClass,jsRegexpGroup,@jsRegexpSpecial,@htmlPreproc oneline keepend
@@ -295,8 +292,8 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink jsDocAuthorContent         Normal
   HiLink jsDocDesc                  Comment
   HiLink jsDocInlineTagContent      Normal
-  HiLink jsDocMarkdownCode          Noemal
-  HiLink jsDocMarkdownCodeContent   Normal
+  HiLink jsDocMarkdownCode          Statement
+  HiLink jsDocMarkdownCodeContent   Statement
   HiLink jsDocType                  Error
   HiLink jsDocSuppressFlag          Error
   HiLink jsComment              Comment
