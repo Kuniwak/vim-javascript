@@ -46,8 +46,6 @@ syntax region  jsComment        start="/\*"  end="\*/" contains=jsCommentTodo,js
 
 "" JSDoc / JSDoc Toolkit
 if !exists("javascript_ignore_javaScriptdoc")
-  syntax case ignore
-
   "" syntax coloring for javadoc comments (HTML)
   "syntax include @javaHtml <sfile>:p:h/html.vim
   "unlet b:current_syntax
