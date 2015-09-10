@@ -268,7 +268,7 @@ if version >= 508 || !exists("did_javascript_syn_inits")
   HiLink jsArrowFunction        Type
   HiLink jsFunction             Type
   HiLink jsGenerator            jsFunction
-  HiLink jsFuncName             Function
+  HiLink jsFuncName             Normal
   HiLink jsArgsObj              Special
   HiLink jsError                Error
   HiLink jsParensError          Error
